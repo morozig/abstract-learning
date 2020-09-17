@@ -24,11 +24,53 @@ export default class NnBasic {
 
     let network = tf.layers.conv2d({
       kernelSize: 3,
-      filters: 1,
+      filters: 8,
       strides: 1,
       padding: 'same',
       useBias: false
     }).apply(input) as tf.SymbolicTensor;
+    network = tf.layers.batchNormalization({
+      axis: 3
+    }).apply(network) as tf.SymbolicTensor;
+    network = tf.layers.activation({
+        activation: 'relu'
+    }).apply(network) as tf.SymbolicTensor;
+
+    network = tf.layers.conv2d({
+      kernelSize: 3,
+      filters: 8,
+      strides: 1,
+      padding: 'same',
+      useBias: false
+    }).apply(network) as tf.SymbolicTensor;
+    network = tf.layers.batchNormalization({
+      axis: 3
+    }).apply(network) as tf.SymbolicTensor;
+    network = tf.layers.activation({
+        activation: 'relu'
+    }).apply(network) as tf.SymbolicTensor;
+
+    network = tf.layers.conv2d({
+      kernelSize: 3,
+      filters: 8,
+      strides: 1,
+      padding: 'same',
+      useBias: false
+    }).apply(network) as tf.SymbolicTensor;
+    network = tf.layers.batchNormalization({
+      axis: 3
+    }).apply(network) as tf.SymbolicTensor;
+    network = tf.layers.activation({
+        activation: 'relu'
+    }).apply(network) as tf.SymbolicTensor;
+
+    network = tf.layers.conv2d({
+      kernelSize: 3,
+      filters: 1,
+      strides: 1,
+      padding: 'same',
+      useBias: false
+    }).apply(network) as tf.SymbolicTensor;
     network = tf.layers.batchNormalization({
       axis: 3
     }).apply(network) as tf.SymbolicTensor;
