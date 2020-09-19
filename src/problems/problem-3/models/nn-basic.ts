@@ -16,61 +16,19 @@ export default class NnBasic {
   private model: tf.LayersModel;
   private height = 5;
   private width = 5;
-  private depth = 2;
+  private depth = 3;
   private createModel() {
     const input = tf.input({
       shape: [this.height, this.width, this.depth]
     });
 
     let network = tf.layers.conv2d({
-      kernelSize: 3,
-      filters: 8,
-      strides: 1,
-      padding: 'same',
-      useBias: false
-    }).apply(input) as tf.SymbolicTensor;
-    network = tf.layers.batchNormalization({
-      axis: 3
-    }).apply(network) as tf.SymbolicTensor;
-    network = tf.layers.activation({
-        activation: 'relu'
-    }).apply(network) as tf.SymbolicTensor;
-
-    network = tf.layers.conv2d({
-      kernelSize: 3,
-      filters: 8,
-      strides: 1,
-      padding: 'same',
-      useBias: false
-    }).apply(network) as tf.SymbolicTensor;
-    network = tf.layers.batchNormalization({
-      axis: 3
-    }).apply(network) as tf.SymbolicTensor;
-    network = tf.layers.activation({
-        activation: 'relu'
-    }).apply(network) as tf.SymbolicTensor;
-
-    network = tf.layers.conv2d({
-      kernelSize: 3,
-      filters: 8,
-      strides: 1,
-      padding: 'same',
-      useBias: false
-    }).apply(network) as tf.SymbolicTensor;
-    network = tf.layers.batchNormalization({
-      axis: 3
-    }).apply(network) as tf.SymbolicTensor;
-    network = tf.layers.activation({
-        activation: 'relu'
-    }).apply(network) as tf.SymbolicTensor;
-
-    network = tf.layers.conv2d({
-      kernelSize: 3,
+      kernelSize: 1,
       filters: 1,
       strides: 1,
       padding: 'same',
       useBias: false
-    }).apply(network) as tf.SymbolicTensor;
+    }).apply(input) as tf.SymbolicTensor;
     network = tf.layers.batchNormalization({
       axis: 3
     }).apply(network) as tf.SymbolicTensor;
@@ -97,8 +55,7 @@ export default class NnBasic {
 
     this.model.compile({
       optimizer: optimizer,
-      loss: 'categoricalCrossentropy',
-      metrics: 'accuracy'
+      loss: 'meanSquaredError'
     });
   }
   private convert(problemInput: Problem3Input) {
@@ -106,12 +63,15 @@ export default class NnBasic {
     for (let i = 0; i < this.height; i++) {
       input[i] = [];
       for (let j = 0; j < this.width; j++) {
-        input[i][j] = [0, 0];
+        input[i][j] = [0, 0, 0];
         if (problemInput[i][j] === Tile.X) {
           input[i][j][0] = 1;
         }
         if (problemInput[i][j] === Tile.O) {
           input[i][j][1] = 1;
+        }
+        if (problemInput[i][j] === Tile.Empty) {
+          input[i][j][2] = 1;
         }
       }
     }
