@@ -1,3 +1,5 @@
+import Problem from '../../interfaces/problem';
+
 export enum Tile {
   Empty,
   X,
@@ -12,7 +14,9 @@ interface Point {
   j: number;
 };
 
-export default class Problem1 {
+export default class Problem1
+  implements Problem<Problem1Input, Problem1Output>
+{
   private height = 5;
   private width = 5;
   private targetsCount = 4;

@@ -1,5 +1,5 @@
-import Problem from './problems/problem-3';
-import Model from './problems/problem-3/models/nn-basic';
+import Problem from './problems/problem-1';
+import Model from './problems/problem-1/models/nn-basic';
 
 const run = async () => {
   const problem = new Problem();
@@ -27,6 +27,12 @@ const run = async () => {
 
   console.log('Test Example After Training');
   console.log(testData[0][0], result1[0]);
+
+  const loss = await model.evaluate(
+    testData.map(pair => pair[0]),
+    testData.map(pair => pair[1])
+  );
+  console.log('Test Loss', loss);
 };
 
 run();

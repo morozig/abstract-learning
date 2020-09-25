@@ -4,6 +4,7 @@ import {
   Problem1Input,
   Problem1Output
 } from '..';
+import Model from '../../../interfaces/model';
 
 type Input = number[][][];
 type Output = number[];
@@ -12,7 +13,9 @@ const learningRate = 0.001;
 const batchSize = 64;
 const numEpochs = 5;
 
-export default class NnBasic {
+export default class NnBasic
+  implements Model<Problem1Input, Problem1Output>
+{
   private model: tf.LayersModel;
   private height = 5;
   private width = 5;
@@ -117,11 +120,36 @@ export default class NnBasic {
     const inputsTensor = tf.tensor4d(inputs);
     const outputsTensor = this.model.predict(inputsTensor) as tf.Tensor2D;
 
-    const outputs = await outputsTensor.array();
+    const outputs = await outputsTensor.array(
+    ) as Problem1Output[];
     
     inputsTensor.dispose();
     outputsTensor.dispose();
 
     return outputs;
+  }
+  async evaluate(
+    problemInputs: Problem1Input[],
+    problemOutputs: Problem1Output[]
+  ) {
+    const inputs = problemInputs.map(
+      problemInput => this.convert(problemInput)
+    );
+    const xsTensor = tf.tensor4d(inputs);
+    const outputs = problemOutputs.slice();
+    const ysTensor = tf.tensor2d(outputs);
+
+    const [ lossTensor ] = this.model.evaluate(
+      xsTensor,
+      ysTensor
+    ) as tf.Scalar[];
+
+    const loss = await lossTensor.array();
+
+    xsTensor.dispose();
+    ysTensor.dispose();
+    lossTensor.dispose();
+
+    return loss;
   }
 };
