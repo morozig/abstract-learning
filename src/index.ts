@@ -1,5 +1,5 @@
-import Problem from './problems/problem-1';
-import Model from './problems/problem-1/models/nn-basic';
+import Problem from './problems/problem-2';
+import Model from './problems/problem-2/models/nn-basic';
 
 const run = async () => {
   const problem = new Problem();
