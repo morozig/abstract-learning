@@ -66,6 +66,33 @@ export default class Problem4
       }
     }
   }
+  private availablePoints(board: Tile[][]) {
+    const availables = [] as Point[];
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (board[i][j] === Tile.Empty) {
+          availables.push({ i, j });
+        }
+      }
+    }
+    return availables;
+  }
+  private isOneMoveLeft(board: Tile[][]) {
+    const availables = this.availablePoints(board);
+    if (!availables.length) {
+      return false;
+    }
+    const hasEnded = getWinner2D(board, 4);
+    if (hasEnded) {
+      return false;
+    }
+    const winningMoves = availables.filter(move => {
+      const newBoard = this.copyBoard(board);
+      newBoard[move.i][move.j] = 
+      return getWinner2D(newBoard, 4);
+    });
+    return winningMoves.length === 1;
+  }
   private playRandomGame() {
     const board = this.emptyBoard();
     const history = [] as {
@@ -81,14 +108,7 @@ export default class Problem4
       !winner &&
       history.length < this.height * this.width
     ) {
-      const availables = [] as Point[];
-      for (let i = 0; i < this.height; i++) {
-        for (let j = 0; j < this.width; j++) {
-          if (board[i][j] === Tile.Empty) {
-            availables.push({ i, j });
-          }
-        }
-      }
+      const availables = this.availablePoints(board);
       const point = randomOf(availables);
       const action = this.pointToAction(point);
       history.push({
