@@ -42,7 +42,7 @@ export default class Problem2
     }
     return board;
   }
-  private generateTrainingExampe(action: number) {
+  private generateTrainingExample(action: number) {
     const point = this.actionToPoint(action);
     const input = this.noisyBoard();
     for (let j = 0; j < this.width; j++) {
@@ -67,7 +67,7 @@ export default class Problem2
       const action = trainActions[
         Math.floor(Math.random() * trainActions.length)
       ];
-      const pair = this.generateTrainingExampe(action);
+      const pair = this.generateTrainingExample(action);
       trainingData.push(pair);
     }
     return trainingData;
@@ -78,7 +78,7 @@ export default class Problem2
       const action = this.testActions[
         Math.floor(Math.random() * this.testActions.length)
       ];
-      const pair = this.generateTrainingExampe(action);
+      const pair = this.generateTrainingExample(action);
       testData.push(pair);
     }
     return testData;

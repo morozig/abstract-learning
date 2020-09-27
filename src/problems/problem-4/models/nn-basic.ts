@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs-node-gpu';
 import {
   Tile,
-  Problem2Input,
-  Problem2Output
+  Problem4Input,
+  Problem4Output
 } from '..';
 import Model from '../../../interfaces/model';
 
@@ -14,7 +14,7 @@ const batchSize = 64;
 const numEpochs = 5;
 
 export default class NnBasic
-  implements Model<Problem2Input, Problem2Output>
+  implements Model<Problem4Input, Problem4Output>
 {
   private model: tf.LayersModel;
   private height = 5;
@@ -104,7 +104,7 @@ export default class NnBasic
       metrics: 'accuracy'
     });
   }
-  private convert(problemInput: Problem2Input) {
+  private convert(problemInput: Problem4Input) {
     const input = [] as Input;
     for (let i = 0; i < this.height; i++) {
       input[i] = [];
@@ -125,8 +125,8 @@ export default class NnBasic
     this.compile();
   }
   async fit(
-    problemInputs: Problem2Input[],
-    problemOutputs: Problem2Output[]
+    problemInputs: Problem4Input[],
+    problemOutputs: Problem4Output[]
   ) {
     const inputs = problemInputs.map(
       problemInput => this.convert(problemInput)
@@ -154,7 +154,7 @@ export default class NnBasic
     console.log(trainingHistory);
   }
   async predict(
-    problemInputs: Problem2Input[]
+    problemInputs: Problem4Input[]
   ) {
     const inputs = problemInputs.map(
       problemInput => this.convert(problemInput)
@@ -163,7 +163,7 @@ export default class NnBasic
     const outputsTensor = this.model.predict(inputsTensor) as tf.Tensor2D;
 
     const outputs = await outputsTensor.array(
-    ) as Problem2Output[];
+    ) as Problem4Output[];
     
     inputsTensor.dispose();
     outputsTensor.dispose();
@@ -171,8 +171,8 @@ export default class NnBasic
     return outputs;
   }
   async evaluate(
-    problemInputs: Problem2Input[],
-    problemOutputs: Problem2Output[]
+    problemInputs: Problem4Input[],
+    problemOutputs: Problem4Output[]
   ) {
     const inputs = problemInputs.map(
       problemInput => this.convert(problemInput)

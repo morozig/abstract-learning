@@ -41,7 +41,7 @@ export default class Problem1
     }
     return board;
   }
-  private generateTrainingExampe(xAction: number) {
+  private generateTrainingExample(xAction: number) {
     const allActions = new Array(this.width * this.height)
       .fill(0)
       .map((_, index) => index + 1);
@@ -77,7 +77,7 @@ export default class Problem1
         .filter(action => action !== this.testAction);
       allXActions.sort(() => Math.random() - 0.5);
       const xAction = allXActions[0];
-      const pair = this.generateTrainingExampe(xAction);
+      const pair = this.generateTrainingExample(xAction);
       trainingData.push(pair);
     }
     return trainingData;
@@ -85,7 +85,7 @@ export default class Problem1
   generateTestData(count: number) {
     const testData = [] as Problem1Pair[];
     for (let n = 0; n < count; n++) {
-      const pair = this.generateTrainingExampe(this.testAction);
+      const pair = this.generateTrainingExample(this.testAction);
       testData.push(pair);
     }
     return testData;

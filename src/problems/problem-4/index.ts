@@ -1,6 +1,10 @@
 import Problem from '../../interfaces/problem';
 import { randomOf } from '../../lib/helpers';
-import { PlaneSymmetry } from '../../lib/transforms';
+import {
+  PlaneSymmetry,
+  board as planeBoard,
+  point as planePoint
+} from '../../lib/transforms';
 import { getWinner2D } from '../../lib/xos';
 
 export enum Tile {
@@ -98,7 +102,7 @@ export default class Problem4
     }
     return history;
   }
-  private generateTrainingExampe(isTest: boolean) {
+  private generateTrainingExample(isTest: boolean) {
     let history = [] as {
       action: number;
       board: Tile[][];
@@ -120,16 +124,45 @@ export default class Problem4
           PlaneSymmetry.Rotation180,
           PlaneSymmetry.Rotation270
         ]);
-
-        
+        const point = planePoint({
+          height: this.height,
+          width: this.width,
+          ...this.actionToPoint(
+            state.action
+          ),
+          sym
+        })
+        state.action = this.pointToAction(
+          point
+        );
+        state.board = planeBoard(
+          state.board,
+          sym
+        );
+      }
+    } else {
+      while(!this.testActions.includes(state.action)) {
+        const sym = PlaneSymmetry.Rotation90;
+        const point = planePoint({
+          height: this.height,
+          width: this.width,
+          ...this.actionToPoint(
+            state.action
+          ),
+          sym
+        })
+        state.action = this.pointToAction(
+          point
+        );
+        state.board = planeBoard(
+          state.board,
+          sym
+        );
       }
     }
-    const point = this.actionToPoint(action);
-    const input = this.noisyBoard();
-    for (let j = 0; j < this.width; j++) {
-      input[point.i][j] = Tile.X;
-    }
-    input[point.i][point.j] = Tile.Empty;
+
+    const input = state.board;
+    const action = state.action;
     const output = new Array<number>(this.width * this.height)
       .fill(0);
     output[action - 1] = 1;
@@ -140,15 +173,7 @@ export default class Problem4
   generateTrainigData(count: number) {
     const trainingData = [] as Problem4Pair[];
     for (let n = 0; n < count; n++) {
-      const allActions = new Array(this.width * this.height)
-        .fill(0)
-        .map((_, index) => index + 1);
-      const trainActions = allActions
-        .filter(action => !this.testActions.includes(action));
-      const action = trainActions[
-        Math.floor(Math.random() * trainActions.length)
-      ];
-      const pair = this.generateTrainingExampe(action);
+      const pair = this.generateTrainingExample(false);
       trainingData.push(pair);
     }
     return trainingData;
@@ -156,10 +181,7 @@ export default class Problem4
   generateTestData(count: number) {
     const testData = [] as Problem4Pair[];
     for (let n = 0; n < count; n++) {
-      const action = this.testActions[
-        Math.floor(Math.random() * this.testActions.length)
-      ];
-      const pair = this.generateTrainingExampe(action);
+      const pair = this.generateTrainingExample(true);
       testData.push(pair);
     }
     return testData;
