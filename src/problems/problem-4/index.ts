@@ -77,7 +77,10 @@ export default class Problem4
     let winner = 0;
     let playerIndex = 0;
 
-    while (!winner) {
+    while (
+      !winner &&
+      history.length < this.height * this.width
+    ) {
       const availables = [] as Point[];
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
@@ -109,7 +112,7 @@ export default class Problem4
       playerIndex: number;
     }[];
 
-    while (!history) {
+    while (!history.length) {
       const randomHistory = this.playRandomGame();
       if (randomHistory.length < this.height * this.width) {
         history = randomHistory;
