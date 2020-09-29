@@ -12,7 +12,10 @@ export enum Tile {
   X,
   O
 }
-export type Problem4Input = Tile[][];
+export interface Problem4Input {
+  playerIndex: number;
+  board: Tile[][];
+};
 export type Problem4Output = number[];
 export type Problem4Pair = [Problem4Input, Problem4Output];
 
@@ -77,51 +80,62 @@ export default class Problem4
     }
     return availables;
   }
-  private isOneMoveLeft(board: Tile[][]) {
+  private getWinningMove(state: Problem4Input) {
+    const { board, playerIndex } = state;
     const availables = this.availablePoints(board);
     if (!availables.length) {
-      return false;
+      return 0;
     }
     const hasEnded = getWinner2D(board, 4);
     if (hasEnded) {
-      return false;
+      return 0;
     }
     const winningMoves = availables.filter(move => {
       const newBoard = this.copyBoard(board);
-      newBoard[move.i][move.j] = 
+      newBoard[move.i][move.j] = this.playerTile(playerIndex);
       return getWinner2D(newBoard, 4);
     });
-    return winningMoves.length === 1;
+    if (winningMoves.length === 1) {
+      return this.pointToAction(winningMoves[0]);
+    } else {
+      return 0;
+    }
   }
   private playRandomGame() {
-    const board = this.emptyBoard();
     const history = [] as {
       action: number;
       board: Tile[][];
       playerIndex: number;
     }[];
 
+    const state = {
+      board: this.emptyBoard(),
+      playerIndex: 0
+    };
+
     let winner = 0;
-    let playerIndex = 0;
 
     while (
       !winner &&
       history.length < this.height * this.width
     ) {
-      const availables = this.availablePoints(board);
-      const point = randomOf(availables);
-      const action = this.pointToAction(point);
+      let action = this.getWinningMove(state);
+      if (!action) {
+        const availables = this.availablePoints(state.board);
+        const point = randomOf(availables);
+        action = this.pointToAction(point);
+      }
       history.push({
         action,
-        board: this.copyBoard(board),
-        playerIndex
+        board: this.copyBoard(state.board),
+        playerIndex: state.playerIndex
       });
-
-      board[point.i][point.j] = this.playerTile(
-        playerIndex
+      const point = this.actionToPoint(action);
+      state.board[point.i][point.j] = this.playerTile(
+        state.playerIndex
       );
-      playerIndex = 1 - playerIndex;
-      winner = getWinner2D(board, 4);
+      state.playerIndex = 1 - state.playerIndex;
+      winner = getWinner2D(state.board, 4);
     }
     return history;
   }
@@ -134,7 +148,10 @@ export default class Problem4
 
     while (!history.length) {
       const randomHistory = this.playRandomGame();
-      if (randomHistory.length < this.height * this.width) {
+      if (
+        randomHistory.length < this.height * this.width &&
+        this.getWinningMove(randomHistory[randomHistory.length - 1])
+      ) {
         history = randomHistory;
       }
     }
@@ -184,7 +201,10 @@ export default class Problem4
       }
     }
 
-    const input = state.board;
+    const input = {
+      board: state.board,
+      playerIndex: state.playerIndex
+    };
     const action = state.action;
     const output = new Array<number>(this.width * this.height)
       .fill(0);
