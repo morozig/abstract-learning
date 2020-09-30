@@ -6,6 +6,7 @@ import {
   point as planePoint
 } from '../../lib/transforms';
 import { getWinner2D } from '../../lib/xos';
+import ProgressBar from 'progress';
 
 export enum Tile {
   Empty,
@@ -215,9 +216,16 @@ export default class Problem4
   }
   generateTrainigData(count: number) {
     const trainingData = [] as Problem4Pair[];
+    const bar = new ProgressBar(
+      '[:bar] :percent :etas', {
+        width: 20,
+        total: count
+      }
+    );
     for (let n = 0; n < count; n++) {
       const pair = this.generateTrainingExample(false);
       trainingData.push(pair);
+      bar.tick();
     }
     return trainingData;
   }

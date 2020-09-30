@@ -104,16 +104,32 @@ export default class NnBasic
       metrics: 'accuracy'
     });
   }
+  private playerTile(playerIndex: number) {
+    switch (playerIndex) {
+      case (0): {
+        return Tile.X;
+      }
+      case (1): {
+        return Tile.O;
+      }
+      default: {
+        return Tile.Empty;
+      }
+    }
+  }
   private convert(problemInput: Problem4Input) {
+    const { board, playerIndex } = problemInput;
+    const playerTile = this.playerTile(playerIndex);
+    const enemyTile = this.playerTile(1 - playerIndex);
     const input = [] as Input;
     for (let i = 0; i < this.height; i++) {
       input[i] = [];
       for (let j = 0; j < this.width; j++) {
         input[i][j] = [0, 0];
-        if (problemInput[i][j] === Tile.X) {
+        if (board[i][j] === playerTile) {
           input[i][j][0] = 1;
         }
-        if (problemInput[i][j] === Tile.O) {
+        if (board[i][j] === enemyTile) {
           input[i][j][1] = 1;
         }
       }
